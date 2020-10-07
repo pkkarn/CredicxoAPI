@@ -43,3 +43,9 @@ class RegisterationSerializer(serializers.ModelSerializer):
         user_acc.groups.add(group)
 
         return user_acc
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email']

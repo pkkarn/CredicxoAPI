@@ -80,10 +80,17 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'cd_db',
         'USER': 'postgres',
-        'PASSWORD': 'APsdnje',
+        'PASSWORD': 'asdasd',
         'HOST': 'localhost',
         'PORT': '5432'
     }
+}
+
+# JWT Authentication Setup
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
 }
 
 
