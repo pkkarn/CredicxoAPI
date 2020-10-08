@@ -45,7 +45,8 @@ class RegisterationSerializer(serializers.ModelSerializer):
         return user_acc
 
 
-class StudentSerializer(serializers.ModelSerializer):
+class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['id', 'username', 'email', 'groups']
+        # Group - 1-Teacher, 2-student, 3-super-admin

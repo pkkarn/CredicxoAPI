@@ -25,12 +25,47 @@ def resgisteration_view(request):
             data = serializer.errors
         return Response(data)
 
+# Admin View Setup
 
-# Admin View
-class AdminView(APIView):
-    permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
-        student = User.objects.filter()
-        serializer = StudentSerializer(student, many=True)
-        return Response(serializer.data)
+@api_view(['GET', 'POST'],)
+def admin_view(request):
+    users = User.objects.all()
+    user = request.user
+    permission_classes = (IsAuthenticated)
+    # Checking user is super-admin or not
+    if request.method == 'GET':
+        if user.groups.filter(name='super-admin').exists():
+            serializer = AdminSerializer(users, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({'response': 'You don\'t have access to see this'})
+    else:
+        serializer = RegisterationSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Admin View Function For Update and Delete
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def admin_update_view(request, pk):
+    user = User.objects.get(id=pk)
+    if request.method == 'GET':
+        if request.user.groups.filter(name='super-admin').exists():
+            serializer = AdminSerializer(user)
+            return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = AdminSerializer(user, request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
