@@ -50,3 +50,10 @@ class AdminSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'groups']
         # Group - 1-Teacher, 2-student, 3-super-admin
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
+        # Group - 1-Teacher, 2-student, 3-super-admin

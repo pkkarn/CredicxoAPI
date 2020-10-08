@@ -69,3 +69,14 @@ def admin_update_view(request, pk):
     elif request.method == 'DELETE':
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# Student View
+
+
+@api_view(['GET', ])
+def student_view(request):
+    user = User.objects.get(username=request.user)
+
+    if request.method == 'GET':
+        serializer = StudentSerializer(user)
+        return Response(serializer.data)
