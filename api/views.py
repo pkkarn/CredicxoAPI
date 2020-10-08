@@ -80,3 +80,25 @@ def student_view(request):
     if request.method == 'GET':
         serializer = StudentSerializer(user)
         return Response(serializer.data)
+
+
+@api_view(['GET', 'POST'],)
+def teacher_view(request):
+    users = User.objects.filter(groups__name='student')
+    user = request.user
+    permission_classes = (IsAuthenticated)
+    if request.method == 'GET':
+        # Checking user is teacher or not
+        if user.groups.filter(name='teacher').exists():
+            serializer = TeacherSerializer(users, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({'respone': 'You\'re not  a teacher'})
+
+    else:  # Post Request
+        serializer = TeacherAddSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -51,9 +51,53 @@ class AdminSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'groups']
         # Group - 1-Teacher, 2-student, 3-super-admin
 
+# Read Only Requested Api for Students
+
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
         # Group - 1-Teacher, 2-student, 3-super-admin
+
+# Teacher Serializer For Only Display Students
+
+
+class TeacherSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        # Group - 1-Teacher, 2-student, 3-super-admin
+
+
+# Teacher Serializer To Add Student
+
+
+class TeacherAddSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'password2']
+
+    def save(self):   # For Password Verification, we're overiding defauly save() method
+        user_acc = User(
+            email=self.validated_data['email'],
+            username=self.validated_data['username'],
+        )
+        password = self.validated_data['password']
+        password2 = self.validated_data['password2']
+
+        if password != password2:
+            raise serializers.ValidationError(
+                {'password': 'Password didn\'t match '})
+        user_acc.set_password(password)
+        user_acc.save()
+        # After Save adding Group
+        # So that Teacher can only add studen list
+        group = Group.objects.get(name='student')
+        user_acc.groups.add(group)
+
+        return user_acc
