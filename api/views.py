@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from api.serializers import *
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
 from django.contrib.auth.models import User
 
 # Registeration API View
@@ -80,6 +79,8 @@ def student_view(request):
     if request.method == 'GET':
         serializer = StudentSerializer(user)
         return Response(serializer.data)
+
+# Teacher View
 
 
 @api_view(['GET', 'POST'],)
